@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generador de Cuadro de Construcción</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+</head>
+<body>
+  <main class="container">
+    <h1>Generador de Cuadro de Construcción</h1>
+    <p>Sube un CSV con columnas <strong>id, n, e</strong> para generar el cuadro de construcción.</p>
+
+    <section class="panel">
+      <label for="csvFile">Archivo CSV</label>
+      <input type="file" id="csvFile" accept=".csv" />
+
+      <label for="csvText">O pega el contenido CSV aquí</label>
+      <textarea id="csvText" placeholder="id,n,e\nP1,100.123,200.456\nP2,101.234,201.567"></textarea>
+
+      <label for="directionSelect">Sentido de lectura</label>
+      <select id="directionSelect">
+        <option value="forward">Horario</option>
+        <option value="reverse">Contrario</option>
+      </select>
+
+      <label for="utmZone">Zona UTM (opcional)</label>
+      <div class="utm-selector">
+        <select id="utmZone">
+          <option value="">Sin proyección (coordenadas locales)</option>
+          <optgroup label="Zonas UTM">
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+            <option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option>
+            <option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option>
+            <option value="31">31</option><option value="32">32</option><option value="33">33</option><option value="34">34</option><option value="35">35</option><option value="36">36</option><option value="37">37</option><option value="38">38</option><option value="39">39</option><option value="40">40</option>
+            <option value="41">41</option><option value="42">42</option><option value="43">43</option><option value="44">44</option><option value="45">45</option><option value="46">46</option><option value="47">47</option><option value="48">48</option><option value="49">49</option><option value="50">50</option>
+            <option value="51">51</option><option value="52">52</option><option value="53">53</option><option value="54">54</option><option value="55">55</option><option value="56">56</option><option value="57">57</option><option value="58">58</option><option value="59">59</option><option value="60">60</option>
+          </optgroup>
+        </select>
+        <select id="utmHemisphere">
+          <option value="N">Hemisferio Norte</option>
+          <option value="S">Hemisferio Sur</option>
+        </select>
+      </div>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="closePolygon" />
+        Cerrar polígono al final
+      </label>
+
+      <div class="actions">
+        <button id="parseButton">Leer CSV</button>
+        <button id="generateButton" disabled>Generar Cuadro</button>
+        <button id="downloadButton" disabled>Descargar CSV</button>
+        <button id="exportPdfButton" disabled>Exportar PDF</button>
+        <button id="exportJpgButton" disabled>Exportar JPG</button>
+      </div>
+      <p class="hint">El CSV debe tener los encabezados <code>id</code>, <code>n</code> y <code>e</code>. El orden de la entrada puede invertirse con el selector.</p>
+    </section>
+    <section class="panel" id="outputPanel" hidden>
+      <h2>Cuadro de Construcción</h2>
+      <div class="output-grid">
+        <div id="map" class="map"></div>
+        <div class="table-column">
+          <div class="table-wrapper" id="tableWrapper"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel info">
+      <h2>Explicación</h2>
+      <p>El cuadro de construcción muestra:</p>
+      <ul>
+        <li><strong>ID</strong>: nombre o punto</li>
+        <li><strong>N</strong>: coordenada Norte</li>
+        <li><strong>E</strong>: coordenada Este</li>
+        <li><strong>Distancia</strong>: distancia entre puntos consecutivos</li>
+        <li><strong>Rumbo</strong>: dirección del segmento</li>
+      </ul>
+      <p>También se calcula la lista de líneas con sus ΔN, ΔE, distancia y rumbo.</p>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
