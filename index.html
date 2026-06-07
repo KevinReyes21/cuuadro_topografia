@@ -5,19 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Generador de Cuadro de Construcción</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 </head>
 <body>
   <main class="container">
     <h1>Generador de Cuadro de Construcción</h1>
-    <p>Sube un CSV con columnas <strong>id, n, e</strong> para generar el cuadro de construcción.</p>
+    <p>Sube un CSV con columnas <strong>id, n, e</strong> (y opcionalmente <strong>z</strong>) para generar el cuadro de construcción.</p>
 
     <section class="panel">
       <label for="csvFile">Archivo CSV</label>
       <input type="file" id="csvFile" accept=".csv" />
 
       <label for="csvText">O pega el contenido CSV aquí</label>
-      <textarea id="csvText" placeholder="id,n,e\nP1,100.123,200.456\nP2,101.234,201.567"></textarea>
+      <textarea id="csvText" placeholder="id,n,e&#10;P1,100.123,200.456&#10;P2,101.234,201.567"></textarea>
 
       <label for="directionSelect">Sentido de lectura</label>
       <select id="directionSelect">
@@ -56,8 +55,13 @@
         <button id="exportPdfButton" disabled>Exportar PDF</button>
         <button id="exportJpgButton" disabled>Exportar JPG</button>
       </div>
-      <p class="hint">El CSV debe tener los encabezados <code>id</code>, <code>n</code> y <code>e</code>. El orden de la entrada puede invertirse con el selector.</p>
+
+      <!-- Mensaje de estado inline (reemplaza los alert) -->
+      <div id="statusMsg" class="status-msg" hidden></div>
+
+      <p class="hint">El CSV debe tener los encabezados <code>id</code>, <code>n</code> y <code>e</code>. La columna <code>z</code> es opcional. El orden puede invertirse con el selector.</p>
     </section>
+
     <section class="panel" id="outputPanel" hidden>
       <h2>Cuadro de Construcción</h2>
       <div class="output-grid">
@@ -72,17 +76,16 @@
       <h2>Explicación</h2>
       <p>El cuadro de construcción muestra:</p>
       <ul>
-        <li><strong>ID</strong>: nombre o punto</li>
-        <li><strong>N</strong>: coordenada Norte</li>
-        <li><strong>E</strong>: coordenada Este</li>
-        <li><strong>Distancia</strong>: distancia entre puntos consecutivos</li>
-        <li><strong>Rumbo</strong>: dirección del segmento</li>
+        <li><strong>ID</strong>: nombre o número del punto</li>
+        <li><strong>N / E</strong>: coordenadas Norte y Este</li>
+        <li><strong>Z</strong>: elevación (si está en el CSV)</li>
+        <li><strong>Distancia</strong>: longitud del segmento que sale de cada punto</li>
+        <li><strong>Rumbo</strong>: dirección cuadrantal del segmento (N xx° E, S xx° W, etc.)</li>
       </ul>
-      <p>También se calcula la lista de líneas con sus ΔN, ΔE, distancia y rumbo.</p>
+      <p>Cuando el polígono está cerrado también se muestra el <strong>área</strong> (fórmula de Gauss) y el <strong>perímetro total</strong>.</p>
     </section>
   </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
